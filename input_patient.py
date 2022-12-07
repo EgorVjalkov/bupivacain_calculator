@@ -1,5 +1,17 @@
 from fetofactor import fetofactor_smpl
 
+class FindCount:
+
+	def __init__(self, dict, description):
+		for k in dict:
+			interpretation = dict[k]['inter']
+			print(f'press "{k}" if {description} {interpretation}')
+		while True:
+			self.answer = input()
+			if self.answer in dict:
+				break
+		self.count = dict[self.answer]['count']
+
 class Patient:
 
 	def __init__(self):
@@ -28,32 +40,31 @@ class Patient:
 			'n': {'inter': 'normal (fetus weight > 2.5kg and < 4kg)', 'count': 0},
 			's': {'inter': 'small (fetus weight < 2.5kg)', 'count': -1}
 		}
-		for k in fetus_weight_dict:
-			description = fetus_weight_dict[k]['inter']
-			print(f'press "{k}" if fetus is {description}')
-		self.fetus = input()
-		while True:
-			if self.fetus in fetus_weight_dict:
-				break
-		self.fetus_count = fetus_weight_dict[self.fetus]['count']
+		fetus = FindCount(fetus_weight_dict, 'fetus is')
+		self.fetus = fetus.answer
+		self.fetus_count = fetus.count
 
 		bladder_condition = {
 			'r': {'inter': 'raptured or oligohydramnios', 'count': 0},
 			'n': {'inter': 'whole, no polyhydramnios', 'count': 0},
 			'p': {'inter': 'whole, polyhydramnios', 'count': 1},
 		}
-		for k in bladder_condition:
-			description = bladder_condition[k]['inter']
-			print(f'press "{k}" if fetal bladder is {description}')
-		self.bladder = input()
-		while True:
-			if self.bladder in bladder_condition:
-				break
-		self.bladder_count = bladder_condition[self.bladder]['count']
+		bladder = FindCount(bladder_condition, 'bladder is')
+		self.bladder = bladder.answer
+		self.bladder_count = bladder.count
+
+		back_discomfort_dict = {
+			'y': {'inter': 'discomfort lying on the back', 'count': 1},
+			'n': {'inter': 'NOT discomfort lying on the back', 'count': 0}
+		}
+		back = FindCount(back_discomfort_dict, 'pregnant has')
+		self.back_discomfort = back.answer
+		self.back_discomfort_count = back.count
 
 		print(self.bmi, self.bmi_count, self.bmi_interpretation)
 		print(self.fetus, self.fetus_count)
 		print(self.bladder, self.bladder_count)
+		print(self.back_discomfort, self.back_discomfort_count)
 
 
 a = Patient()
