@@ -17,9 +17,9 @@ class Patient:
 	def __init__(self):
 		self.patient_name = input('pregnant`s name?\n')
 		self.height = int(input('pregnant`s height?\n'))
-		self.round_height = self.height
-		while self.round_height % 5 > 0:
-			self.round_height += 1
+		self.rounded_height = self.height
+		while self.rounded_height % 5 > 0:
+			self.rounded_height += 1
 		self.weight = int(input('pregnant`s weight?\n'))
 		self.bmi = round(self.weight/pow(self.height/100, 2), 1)
 		self.factors_list = []
