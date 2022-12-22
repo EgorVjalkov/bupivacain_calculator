@@ -1,4 +1,4 @@
-class FindCount:
+class ChoosingVariantFromDict:
 
     def __init__(self, dict_, description):
         for k in dict_:
@@ -9,21 +9,60 @@ class FindCount:
             if self.answer in dict_:
                 break
         self.count = dict_[self.answer]['count']
+        self.mark = dict_[self.answer]['mark']
 
+
+class InputChecking:
+    def __init__(self, parameter, checking):
+        while True:
+            if checking == 'num':
+                if parameter.isnumeric():
+                    break
+            if checking == 'str':
+                if parameter.isalpha():
+                    break
+            else:
+                print('incorrect input')
+                parameter = input('repeat input\n:')
+        self.is_correct = parameter
 
 class Patient:
 
     def __init__(self):
+        self.name = 'new patient'
+        self.height = 0
+        self.weight = 0
+        self.bmi = {}
+        self.fetus = {}
+        self.bladder = {}
+        self.back_discomfort = {}
         self.risk_factors_list = []
-        self.patient_name = input('pregnant`s name?\n')
-        self.height = int(input('pregnant`s height?\n'))
-        self.weight = int(input('pregnant`s weight?\n'))
+        self.sum_of_risk = 0
+        self.bupivacaine_dose = 0
 
-    # bmi
+    def input_patient(self):
+        name = input('pregnant`s name?\n')
+        if name:
+            self.name = name
+        height = InputChecking(input('pregnant`s height?\n'), 'num')
+        self.height = int(height.is_correct)
+        weight = InputChecking(input('pregnant`s weight?\n'), 'num')
+        self.weight = int(weight.is_correct)
+        return self.name, self.height, self.weight
+
+    def input_patient_like_code(self):
+        code = input("Input a code. Code example: hhh.www.f.b.bd, where:"
+                     "\nh - pregnant`s height,"
+                     "\nw - pregnant`s weight,"
+                     "\nf - fetus mark,"
+                     "\nb - fetal bladder mark,"
+                     "\nbd - back discomfort mark")
+
     def get_bmi(self):
-        return round(self.weight/pow(self.height/100, 2), 1)
+        self.bmi['mark'] = round(self.weight/pow(self.height/100, 2), 1)
+        return self.bmi
 
-    def get_bmi_risk_count(self, bmi):
+    def get_bmi_count(self):
         bmi_interpretation_dict = {
             18.5: {'inter': 'deficit', 'count': -1},
             25.0: {'inter': 'normal', 'count': -1},
@@ -33,56 +72,69 @@ class Patient:
             100.0: {'inter': 'obesity 3', 'count': 3}
         }
         for k in bmi_interpretation_dict:
-            if bmi < k:
-                bmi_count = bmi_interpretation_dict[k]['count']
-                bmi_interpretation = bmi_interpretation_dict[k]['inter']
-                return {'inter': bmi_interpretation, 'count': bmi_count}
+            if self.bmi['mark'] < k:
+                self.bmi['inter'] = bmi_interpretation_dict[k]['inter']
+                self.bmi['count'] = bmi_interpretation_dict[k]['count']
+                return self.bmi
 
         # fetus
+    def get_fetus_count(self):
         fetus_weight_dict = {
-            'b': {'inter': 'big (fetus weight > 4kg)', 'count': 1},
-            'n': {'inter': 'normal (fetus weight > 2.5kg and < 4kg)', 'count': 0},
-            's': {'inter': 'small (fetus weight < 2.5kg)', 'count': -1}
+            'b': {'inter': 'big (fetus weight > 4kg)', 'mark': 'big', 'count': 1},
+            'n': {'inter': 'normal (fetus weight > 2.5kg and < 4kg)', 'mark': 'normal', 'count': 0},
+            's': {'inter': 'small (fetus weight < 2.5kg)', 'mark': 'small', 'count': -1}
         }
-        fetus = FindCount(fetus_weight_dict, 'fetus is')
-        self.fetus = fetus.answer
-        self.fetus_count = fetus.count
-        self.risk_factors_list.append(self.fetus_count)
+        fetus = ChoosingVariantFromDict(fetus_weight_dict, 'fetus is')
+        self.fetus = {'mark': fetus.mark, 'count': fetus.count}
+        return self.fetus
 
-        # fetal bladder
+    def get_bladder_count(self):
         bladder_condition = {
-            'r': {'inter': 'raptured or oligohydramnios', 'count': 0},
-            'n': {'inter': 'intact, no polyhydramnios', 'count': 0},
-            'p': {'inter': 'intact, polyhydramnios', 'count': 1},
+            'r': {'inter': 'raptured or oligohydramnios', 'mark': 'oligo', 'count': 0},
+            'n': {'inter': 'intact, no polyhydramnios', 'mark': 'normal', 'count': 0},
+            'p': {'inter': 'intact, polyhydramnios', 'mark': 'poly', 'count': 1},
         }
-        bladder = FindCount(bladder_condition, 'bladder is')
-        self.bladder = bladder.answer
-        self.bladder_count = bladder.count
-        self.risk_factors_list.append(self.bladder_count)
+        bladder = ChoosingVariantFromDict(bladder_condition, 'bladder is')
+        self.bladder = {'mark': bladder.mark, 'count': bladder.count}
 
-        # discomfort in position on the back
+    def get_back_discomfort_count(self):
         back_discomfort_dict = {
-            'y': {'inter': 'discomfort in the position on the back', 'count': 1},
-            'n': {'inter': 'NOT discomfort in the position on the back', 'count': 0}
+            'y': {'inter': 'discomfort in the position on the back', 'mark': 'discomfort', 'count': 1},
+            'n': {'inter': 'NOT discomfort in the position on the back', 'mark': 'NO discomfort', 'count': 0}
         }
-        back = FindCount(back_discomfort_dict, 'pregnant has')
-        self.back_discomfort = back.answer
-        self.back_discomfort_count = back.count
-        if sum(self.risk_factors_list) < 0:
-            self.risk_factors_list.append(self.back_discomfort_count)
+        back = ChoosingVariantFromDict(back_discomfort_dict, 'pregnant has')
+        self.back_discomfort = {'mark': back.mark, 'count': back.count}
 
-        print(self.bmi, self.bmi_count, self.bmi_interpretation)
-        print(self.fetus, self.fetus_count)
-        print(self.bladder, self.bladder_count)
-        print(self.back_discomfort, self.back_discomfort_count)
+    def count_a_sum_of_risk(self):
+        self.get_bmi()
+        self.get_bmi_count()
+        self.risk_factors_list.append(self.bmi['count'])
+        self.get_fetus_count()
+        self.risk_factors_list.append(self.fetus['count'])
+        self.get_bladder_count()
+        self.risk_factors_list.append(self.bladder['count'])
+        self.get_back_discomfort_count()
+
+        if sum(self.risk_factors_list) <= 0:
+            self.risk_factors_list.append(self.back_discomfort['count'])
+        else:
+            self.back_discomfort['count'] = 'not using'
+
+        if sum(self.risk_factors_list) > 4:
+            self.sum_of_risk = 4
+        else:
+            self.sum_of_risk = sum(self.risk_factors_list)
+
+        print(self.name)
+        print(self.bmi)
+        print(self.fetus)
+        print(self.bladder)
+        print(self.back_discomfort)
         print(self.risk_factors_list)
 
-    # counting sum of factors
-    def count_risk_factors(self):
-        sum_factors = sum(self.risk_factors_list) if sum(self.risk_factors_list) < 4 else 4
-        return sum_factors
+        return self.sum_of_risk
 
-    def get_bupivacaine_dose(self, sum_of_risk):
+    def get_bupivacaine_dose(self):
         bupivacaine_dosage = {
             145: [1.5, 1.4, 1.4, 1.3, 1.2, 1.1, 1.0],
             150: [1.9, 1.8, 1.7, 1.5, 1.4, 1.4, 1.3],
@@ -104,15 +156,16 @@ class Patient:
                     rounded_height += 1
         else:
             rounded_height = self.height
+        self.bupivacaine_dose = bupivacaine_dosage[rounded_height][self.sum_of_risk+2]
 
-        return bupivacaine_dosage[rounded_height][sum_of_risk+2]
-
-    def get_bupivacaine_fastly(self, code):
-        code_list = code.split()
-        code_keys = [self.height, self.weight, self.fetus, self.bladder, self.back_discomfort]
-
+        return self.bupivacaine_dose
+#
+#     def get_bupivacaine_fastly(self, code):
+#         code_list = code.split()
+#         code_keys = [self.height, self.weight, self.fetus, self.bladder, self.back_discomfort]
+#
 # code = 123.45.f.b.d
 
-new_patient = Patient()
-risk_factors = new_patient.count_risk_factors()
-print(new_patient.count_risk_factors(), new_patient.get_bupivacaine_dose(risk_factors))
+# new_patient = Patient()
+# risk_factors = new_patient.count_risk_factors()
+# print(new_patient.count_risk_factors(), new_patient.get_bupivacaine_dose(risk_factors))
