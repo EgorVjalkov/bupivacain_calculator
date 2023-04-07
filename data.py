@@ -1,26 +1,32 @@
-bmi_interpretation_dict = {
-    18.5: {'inter': 'deficit', 'count': -1},
-    25.0: {'inter': 'normal', 'count': -1},
-    30.0: {'inter': 'overage', 'count': 0},
-    35.0: {'inter': 'obesity 1', 'count': 1},
-    40.0: {'inter': 'obesity 2', 'count': 2},
-    100.0: {'inter': 'obesity 3', 'count': 3}
-}
-fetus_weight_dict = {
-    'b': {'inter': 'big (fetus weight > 4kg)', 'count': 1},
-    'n': {'inter': 'normal (fetus weight > 2.5kg and < 4kg)', 'count': 0},
-    's': {'inter': 'small (fetus weight < 2.5kg)', 'count': -1}
-}
+risk_factor_dict = {
+    'bmi': {
+        'risk_factor_dict': {
+            18.5: {'inter': 'deficit', 'count': -1},
+            25.0: {'inter': 'normal', 'count': -1},
+            30.0: {'inter': 'overage', 'count': 0},
+            35.0: {'inter': 'obesity 1', 'count': 1},
+            40.0: {'inter': 'obesity 2', 'count': 2},
+            100.0: {'inter': 'obesity 3', 'count': 3}}},
 
-bladder_condition = {
-    'r': {'inter': 'raptured or oligohydramnios', 'count': 0},
-    'n': {'inter': 'intact, no polyhydramnios', 'count': 0},
-    'p': {'inter': 'intact, polyhydramnios', 'count': 1},
-}
+    'fetus': {
+        'risk_factor_dict': {
+            'b': {'inter': 'big (fetus weight > 4kg)', 'count': 1},
+            'n': {'inter': 'normal (fetus weight > 2.5kg and < 4kg)', 'count': 0},
+            's': {'inter': 'small (fetus weight < 2.5kg)', 'count': -1}},
+        'description': 'fetus is'},
 
-back_discomfort_dict = {
-    'y': {'inter': 'discomfort in the position on the back', 'count': 1},
-    'n': {'inter': 'NOT discomfort in the position on the back', 'count': 0}
+    'bladder': {
+        'risk_factor_dict': {
+            'r': {'inter': 'raptured or oligohydramnios', 'count': 0},
+            'n': {'inter': 'intact, no polyhydramnios', 'count': 0},
+            'p': {'inter': 'intact, polyhydramnios', 'count': 1}},
+        'description': 'bladder is'},
+
+    'back_discomfort': {
+        'risk_factor_dict': {
+            'y': {'inter': 'discomfort in the position on the back', 'count': 1},
+            'n': {'inter': 'NOT discomfort in the position on the back', 'count': 0}},
+        'description': 'pregnant has'}
 }
 
 bupivacaine_dosage = {
