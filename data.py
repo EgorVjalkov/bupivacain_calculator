@@ -39,3 +39,23 @@ bupivacaine_dosage = {
     175: [2.8, 2.6, 2.4, 2.3, 2.1, 1.9, 1.8],
     180: [2.9, 2.8, 2.5, 2.4, 2.2, 2.0, 1.9]
 }
+
+block_level_list = ['>=T4'] + list('T' + str(i) for i in range(5, 9)) + ['<=T10']
+patient_file_questionnaire = {
+    'position for punction': ('lying', 'sitting'),
+    'dose of 0.5% havy bupivacaine, ml': 0,
+    'dose of 0.005% fentanyl, if using, ml': 0,
+    'sensory block level in 5 min': block_level_list,
+    'events for raising/lowering block level': ('raising head of operating table', 'lowering head of operating table', 'no need'),
+    'dose of 0.005% fenylefrine BEFORE delivering, ml': 0,
+    'sensory block level AFTER delivering': block_level_list,
+    'dose of 0.005% fenylefrine AFTER delivering, ml': 0,
+    'estimation': (1, 2, 3, 4, 5),
+    'remark': ''
+}
+
+
+
+
+
+
