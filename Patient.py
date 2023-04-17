@@ -85,21 +85,57 @@ class Patient:
 
         return counted_dose
 
-    def write_patient_data_to_file(self):
+    def answer_the_questionnaire(self, questionnaire):
+        answers_dict = {}
+        for question in questionnaire:
+            variants_of_answer = questionnaire[question]
+            if not variants_of_answer:
+                if type(variants_of_answer) == int:
+                    while True:
+                        try:
+                            answer = input(f'{question}? Enter a num\n: ')
+                            answer = answer.replace(',', '.') if ',' in answer else answer
+                            answers_dict[question] = float(answer)
+                            break
+                        except ValueError:
+                            print('*********input error*********')
+                else:
+                    answers_dict[question] = input(f'{question}?\n: ')
+            else:
+                variants_of_answer = dict(enumerate(variants_of_answer, 1))
+                while True:
+                    try:
+                        print(question)
+                        print_variants = {print(f'press {k} if {variants_of_answer[k]}') for k in variants_of_answer}
+                        answers_dict[question] = variants_of_answer[int(input(': '))]
+                        break
+                    except KeyError:
+                        print('*********input error!*********')
+                    except ValueError:
+                        print('*********input error!*********')
+        return answers_dict
+
+    def write_patient_data_to_file(self, questionnaire_flag):
         file_path = 'patients/patients.csv'
         head_of_frame = list(self.patient_data.keys()) + list(data.patient_file_questionnaire)
+
         with open(file_path, 'a+') as f:
             writer = csv.writer(f)
+
             if not os.stat(file_path).st_size:
                 writer.writerow(head_of_frame)
+
+            if questionnaire_flag:
+                if not self.patient_data['name']:
+                    self.patient_data['name'] = input('Enter a patient`s name\n: ')
+                patient_answers = list(self.patient_data.values())
+                patient_answers.extend(list(self.answer_the_questionnaire(data.patient_file_questionnaire).values()))
             else:
-                # здесь опросник будет!!!
-                writer.writerow()
+                patient_answers = list(self.patient_data.values())
 
+            writer.writerow(patient_answers)
 
-
-
-    #def get_bupivacaine_fastly(self, code):
+    # def get_bupivacaine_fastly(self, code):
         # code_list = code.split()
         # code_keys = [self.height, self.weight, self.fetus, self.bladder, self.back_discomfort]
 
