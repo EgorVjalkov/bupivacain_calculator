@@ -1,14 +1,15 @@
 from Patient import Patient
 from data import bupivacaine_dosage
+import DataBase
 
-A = Patient(patient_name='', height=165, weight=120)
+
+db = DataBase.DataBase()
+
+A = Patient(patient_name='', height=0, weight=0)
 #A = Patient()
 A.input_patient_data()
-A.count_risk_factors(answers={'fetus': 'n', 'bladder': 'n', 'back_discomfort': 'y'})
+A.count_risk_factors(answers={'fetus': '', 'bladder': '', 'back_discomfort': ''})
 #A.count_risk_factors(answers={})
-print(A.get_bupivacaine_dose(A.count_a_sum(), bupivacaine_dosage))
-# while True:
-    # сделай datetime
-    # диалог о написании статистики, еще надо сделать чтобы можно было заполнить для других теток данные по времени и дате
-A.write_patient_data_to_file(questionnaire_flag=True)
+A.get_bupivacaine_dose(A.count_a_sum(), bupivacaine_dosage)
+db.write_patient_data_to_file(A.patient_data, questionnaire_flag=True)
 

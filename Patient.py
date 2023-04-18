@@ -1,13 +1,13 @@
-import data
 from data import risk_factor_dict
 from RiskFactor import RiskFactor
-import csv
-import os
+from datetime import datetime
 
 
 class Patient:
 
     def __init__(self, patient_name='', height=0, weight=0):
+        dt = datetime.today()
+        self.datetime = dt.strftime('%d.%m.%Y %H:%M')
         self.patient_name = patient_name
         self.height = height
         self.weight = weight
@@ -16,7 +16,7 @@ class Patient:
         self.risk_factors = ('bmi', 'fetus', 'bladder', 'back_discomfort')
         self.factors_count_dict = {}
         self.sum_of_factors = 0
-        self.patient_data = {'name': self.patient_name, 'height': self.height, 'weight': self.weight}
+        self.patient_data = {'datetime': self.datetime, 'name': self.patient_name, 'height': self.height, 'weight': self.weight}
 
     def input_patient_data(self):
         if not self.height:
@@ -40,7 +40,7 @@ class Patient:
                 rf_dict = rf.get_bmi_risk_count(self.bmi)
 
             else:
-                if rf.name in answers:
+                if rf.name in answers and answers[rf.name]:
                     rf_dict = rf.find_risk_factor_with_answer(answers[rf.name])
                 else:
                     rf_dict = rf.input_risk_factor_and_get_count()
@@ -82,58 +82,10 @@ class Patient:
 
         counted_dose = bupivacaine_dosage[rounded_height][sum_of_risk+2]
         self.patient_data['counted dose'] = counted_dose
+        print(f'0,5% spinal heavy bupivacaine dose is {counted_dose}ml')
 
         return counted_dose
 
-    def answer_the_questionnaire(self, questionnaire):
-        answers_dict = {}
-        for question in questionnaire:
-            variants_of_answer = questionnaire[question]
-            if not variants_of_answer:
-                if type(variants_of_answer) == int:
-                    while True:
-                        try:
-                            answer = input(f'{question}? Enter a num\n: ')
-                            answer = answer.replace(',', '.') if ',' in answer else answer
-                            answers_dict[question] = float(answer)
-                            break
-                        except ValueError:
-                            print('*********input error*********')
-                else:
-                    answers_dict[question] = input(f'{question}?\n: ')
-            else:
-                variants_of_answer = dict(enumerate(variants_of_answer, 1))
-                while True:
-                    try:
-                        print(question)
-                        print_variants = {print(f'press {k} if {variants_of_answer[k]}') for k in variants_of_answer}
-                        answers_dict[question] = variants_of_answer[int(input(': '))]
-                        break
-                    except KeyError:
-                        print('*********input error!*********')
-                    except ValueError:
-                        print('*********input error!*********')
-        return answers_dict
-
-    def write_patient_data_to_file(self, questionnaire_flag):
-        file_path = 'patients/patients.csv'
-        head_of_frame = list(self.patient_data.keys()) + list(data.patient_file_questionnaire)
-
-        with open(file_path, 'a+') as f:
-            writer = csv.writer(f)
-
-            if not os.stat(file_path).st_size:
-                writer.writerow(head_of_frame)
-
-            if questionnaire_flag:
-                if not self.patient_data['name']:
-                    self.patient_data['name'] = input('Enter a patient`s name\n: ')
-                patient_answers = list(self.patient_data.values())
-                patient_answers.extend(list(self.answer_the_questionnaire(data.patient_file_questionnaire).values()))
-            else:
-                patient_answers = list(self.patient_data.values())
-
-            writer.writerow(patient_answers)
 
     # def get_bupivacaine_fastly(self, code):
         # code_list = code.split()
