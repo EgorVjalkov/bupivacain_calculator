@@ -14,7 +14,28 @@ class DataBase:
             self.not_finished_patients = [i for i in self.database_reader if len(i) < len(self.head_of_db)]
             # недописанные записи надо сделать чтоб дописывал, т.е. снова кидал их в цикл анкеты
 
-    def answer_the_questionnaire(self, questionnaire):
+    def change_patient_with_missing_data(self):
+        if not self.not_finished_patients:
+            print('You don`t have patients with missing data')
+            return False
+        else:
+            print('Change a patient')
+            print(self.not_finished_patients)
+            patients = dict(enumerate(self.not_finished_patients, 1))
+            print(patients)
+            while True:
+                try:
+                    for_print = {print(f'press {k} for change {" ".join(patients[k][:2])}') for k in patients}
+                    changed_patient = patients[int(input(': '))]
+                    break
+                except KeyError:
+                    print('*********input error!*********')
+                except ValueError:
+                    print('*********input error!*********')
+            return changed_patient
+
+    def answer_the_questionnaire(self, questionnaire, patient_with_missing_data=()):
+        # добавь логику, чтоб анткета старотовала не сначала, добавь командв чтоб можно было б дописать или переписать
         answers_dict = {}
         try:
             for question in questionnaire:
@@ -63,7 +84,7 @@ class DataBase:
                     database_writer.writerow(head_of_frame)
 
                 if questionnaire_flag:
-                    if not patient_data['name']:
+                    if patient_data['name'] == 'noname':
                         patient_data['name'] = input('Enter a patient`s name\n: ')
                     patient_answers = list(patient_data.values())
                     patient_answers.extend(list(self.answer_the_questionnaire(patient_file_questionnaire).values()))
@@ -71,3 +92,5 @@ class DataBase:
                     patient_answers = list(patient_data.values())
 
                 database_writer.writerow(patient_answers)
+
+# сделай новую фенкцию чтоб переписывать данные

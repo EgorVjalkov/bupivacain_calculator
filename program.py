@@ -1,15 +1,23 @@
 from Patient import Patient
 from data import bupivacaine_dosage
 import DataBase
+# нужно сделать заполнениеDataBase c использованием класс меню
+# задроч с кейборд интеррапт на написании имени пациентки
 
-
-db = DataBase.DataBase()
-
-A = Patient(patient_name='', height=0, weight=0)
+# mенюшка новый пациент
+A = Patient(height=0, weight=0)
 #A = Patient()
 A.input_patient_data()
 A.count_risk_factors(answers={'fetus': '', 'bladder': '', 'back_discomfort': ''})
 #A.count_risk_factors(answers={})
 A.get_bupivacaine_dose(A.count_a_sum(), bupivacaine_dosage)
-db.write_patient_data_to_file(A.patient_data, questionnaire_flag=True)
+
+# менюшка на запись статистики: варианты now, later
+db = DataBase.DataBase()
+#now
+questionnaire_flag = True if input("Do you answer a some questions? Press y or n and enter\n: ") == 'y' else False
+db.write_patient_data_to_file(A.patient_data, questionnaire_flag)
+#later = exit
+
+#db.change_patient_with_missing_data()
 

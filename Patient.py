@@ -5,7 +5,7 @@ from datetime import datetime
 
 class Patient:
 
-    def __init__(self, patient_name='', height=0, weight=0):
+    def __init__(self, patient_name='noname', height=0, weight=0):
         dt = datetime.today()
         self.datetime = dt.strftime('%d.%m.%Y %H:%M')
         self.patient_name = patient_name
@@ -21,8 +21,10 @@ class Patient:
     def input_patient_data(self):
         if not self.height:
             self.height = int(input('pregnant`s height?\n'))
+            self.patient_data['height'] = self.height
         if not self.weight:
             self.weight = int(input('pregnant`s weight?\n'))
+            self.patient_data['weight'] = self.weight
         return self.height, self.weight
 
     # bmi

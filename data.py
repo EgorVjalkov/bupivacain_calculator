@@ -17,7 +17,7 @@ risk_factor_dict = {
 
     'bladder': {
         'risk_factor_dict': {
-            'r': {'inter': 'raptured or oligohydramnios', 'count': 0},
+            'r': {'inter': 'raptured or oligohydramnios', 'count': -1},
             'n': {'inter': 'intact, no polyhydramnios', 'count': 0},
             'p': {'inter': 'intact, polyhydramnios', 'count': 1}},
         'description': 'bladder is'},
