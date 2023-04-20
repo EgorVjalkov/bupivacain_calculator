@@ -19,7 +19,7 @@ class Patient:
         self.patient_data = {'datetime': self.datetime, 'name': self.patient_name, 'height': self.height, 'weight': self.weight}
 
     def input_patient_data(self):
-        if not self.height:
+        if not self.height:# сделвй инпуты через меню
             self.height = int(input('pregnant`s height?\n'))
             self.patient_data['height'] = self.height
         if not self.weight:
@@ -58,9 +58,9 @@ class Patient:
         back_discomfort_count = self.factors_count_dict.pop('back_discomfort')
         self.sum_of_factors = sum(list(self.factors_count_dict.values()))
         # присмотрись протестируй
-        if self.sum_of_factors >= 0 and back_discomfort_count:
+        if self.sum_of_factors <= 0 and back_discomfort_count:
             self.sum_of_factors += back_discomfort_count
-        elif self.sum_of_factors < 0 and back_discomfort_count:
+        elif self.sum_of_factors > 0 and back_discomfort_count:
             self.patient_data['back_discomfort_count'] = 'not using'
             print('back_discomfort riskfactor is not used')
 

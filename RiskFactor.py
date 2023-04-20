@@ -1,3 +1,4 @@
+from Menu import Menu
 class RiskFactor:
     def __init__(self, name, data):
         self.name = name
@@ -20,14 +21,9 @@ class RiskFactor:
         return self.risk_factor_data
 
     def input_risk_factor_and_get_count(self):
-        for k in self.risk_factor_dict:
-            interpretation = self.risk_factor_dict[k]['inter']
-            print(f'press "{k}" if {self.description} {interpretation}')
-        while True:
-            answer = input()
-            if answer in self.risk_factor_dict:
-                self.risk_factor_data['interpretation'] = self.risk_factor_dict[answer]['inter']
-                self.risk_factor_data['count'] = self.risk_factor_dict[answer]['count']
-                break
+        menu = Menu(variants=self.risk_factor_dict, description=self.description)
+        menu.print_variants()
+        answer = menu.get_user_answer()
+        self.risk_factor_data['interpretation'] = answer['inter']
+        self.risk_factor_data['count'] = answer['count']
         return self.risk_factor_data
-

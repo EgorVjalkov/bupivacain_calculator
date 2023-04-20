@@ -5,7 +5,7 @@ import DataBase
 # задроч с кейборд интеррапт на написании имени пациентки
 
 # mенюшка новый пациент
-A = Patient(height=0, weight=0)
+A = Patient(height=160, weight=57)
 #A = Patient()
 A.input_patient_data()
 A.count_risk_factors(answers={'fetus': '', 'bladder': '', 'back_discomfort': ''})
