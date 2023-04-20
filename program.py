@@ -15,8 +15,12 @@ A.get_bupivacaine_dose(A.count_a_sum(), bupivacaine_dosage)
 # менюшка на запись статистики: варианты now, later
 db = DataBase.DataBase()
 #now
-questionnaire_flag = True if input("Do you answer a some questions? Press y or n and enter\n: ") == 'y' else False
-db.write_patient_data_to_file(A.patient_data, questionnaire_flag)
+try:
+    questionnaire_flag = True if input("Do you answer a some questions? Press y or n and enter\n: ") == 'y' else False
+    db.write_patient_data_to_file(A.patient_data, questionnaire_flag)
+except KeyboardInterrupt:
+    db.write_patient_data_to_file(A.patient_data, questionnaire_flag=False)
+
 #later = exit
 
 #db.change_patient_with_missing_data()

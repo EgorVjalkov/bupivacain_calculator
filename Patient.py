@@ -40,6 +40,7 @@ class Patient:
                 self.get_bmi()
                 self.patient_data['bmi'] = self.bmi
                 rf_dict = rf.get_bmi_risk_count(self.bmi)
+                print(f'bmi is {self.bmi} ({rf_dict["interpretation"]})')
 
             else:
                 if rf.name in answers and answers[rf.name]:
@@ -54,13 +55,17 @@ class Patient:
         return self.risk_factors
 
     def count_a_sum(self):
+        back_discomfort_count = self.factors_count_dict.pop('back_discomfort')
         self.sum_of_factors = sum(list(self.factors_count_dict.values()))
-        if self.sum_of_factors > 0 and self.factors_count_dict['back_discomfort']:
-            self.sum_of_factors -= 1
+        # присмотрись протестируй
+        if self.sum_of_factors >= 0 and back_discomfort_count:
+            self.sum_of_factors += back_discomfort_count
+        elif self.sum_of_factors < 0 and back_discomfort_count:
             self.patient_data['back_discomfort_count'] = 'not using'
-            self.patient_data['sum'] = self.sum_of_factors
-            self.patient_data['limiting sum'] = False
             print('back_discomfort riskfactor is not used')
+
+        self.patient_data['sum'] = self.sum_of_factors
+        self.patient_data['limiting sum'] = False
 
         if self.sum_of_factors >= 4:
             self.sum_of_factors = 4
@@ -84,7 +89,7 @@ class Patient:
 
         counted_dose = bupivacaine_dosage[rounded_height][sum_of_risk+2]
         self.patient_data['counted dose'] = counted_dose
-        print(f'0,5% spinal heavy bupivacaine dose is {counted_dose}ml')
+        print(f'0,5% spinal heavy bupivacaine dose is {counted_dose}ml\n')
 
         return counted_dose
 

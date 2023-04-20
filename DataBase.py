@@ -1,16 +1,19 @@
 import csv
 import os
 from data import patient_file_questionnaire
+from Menu import Menu
 
 
 class DataBase:
     def __init__(self, database_path=''):
         if not database_path:
             self.database_path = 'patients/patients.csv'
-        self.fool_flag = True if not os.stat(self.database_path).st_size else False
         with open(self.database_path, 'r+') as database:
             self.database_reader = list(csv.reader(database, delimiter=','))
-            self.head_of_db = self.database_reader[0]
+            if not self.database_reader:
+                self.head_of_db = []
+            else:
+                self.head_of_db = self.database_reader[0]
             self.not_finished_patients = [i for i in self.database_reader if len(i) < len(self.head_of_db)]
             # недописанные записи надо сделать чтоб дописывал, т.е. снова кидал их в цикл анкеты
 
@@ -40,30 +43,11 @@ class DataBase:
         try:
             for question in questionnaire:
                 variants_of_answer = questionnaire[question]
-                if not variants_of_answer:
-                    if type(variants_of_answer) == int:
-                        while True:
-                            try:
-                                answer = input(f'{question}? Enter a num\n: ')
-                                answer = answer.replace(',', '.') if ',' in answer else answer
-                                answers_dict[question] = float(answer)
-                                break
-                            except ValueError:
-                                print('*********input error*********')
-                    else:
-                        answers_dict[question] = input(f'{question}?\n: ')
-                else:
-                    variants_of_answer = dict(enumerate(variants_of_answer, 1))
-                    while True:
-                        try:
-                            print(question)
-                            print_variants = {print(f'press {k} if {variants_of_answer[k]}') for k in variants_of_answer}
-                            answers_dict[question] = variants_of_answer[int(input(': '))]
-                            break
-                        except KeyError:
-                            print('*********input error!*********')
-                        except ValueError:
-                            print('*********input error!*********')
+                menu = Menu(question, variants_of_answer)
+                menu.print_a_question()
+                if variants_of_answer:
+                    menu.print_variants()
+                answers_dict[question] = menu.get_user_answer()
         except KeyboardInterrupt:
             return answers_dict
         return answers_dict
@@ -73,7 +57,7 @@ class DataBase:
         with open(self.database_path, 'a+') as database:
             database_writer = csv.writer(database)
 
-            if self.fool_flag:
+            if not self.head_of_db:
                 database_writer.writerow(head_of_frame)
             else:
                 if self.head_of_db != head_of_frame:
@@ -94,3 +78,27 @@ class DataBase:
                 database_writer.writerow(patient_answers)
 
 # сделай новую фенкцию чтоб переписывать данные
+#                 if not variants_of_answer:
+#                     if type(variants_of_answer) == int:
+#                         while True:
+#                             try:
+#                                 answer = input(f'{question}? Enter a num\n: ')
+#                                 answer = answer.replace(',', '.') if ',' in answer else answer
+#                                 answers_dict[question] = float(answer)
+#                                 break
+#                             except ValueError:
+#                                 print('*********input error*********')
+#                     else:
+#                         answers_dict[question] = input(f'{question}?\n: ')
+#                 else:
+#                     variants_of_answer = dict(enumerate(variants_of_answer, 1))
+#                     while True:
+#                         try:
+#                             print(question)
+#                             print_variants = {print(f'press {k} if {variants_of_answer[k]}') for k in variants_of_answer}
+#                             answers_dict[question] = variants_of_answer[int(input(': '))]
+#                             break
+#                         except KeyError:
+#                             print('*********input error!*********')
+#                         except ValueError:
+#                             print('*********input error!*********')

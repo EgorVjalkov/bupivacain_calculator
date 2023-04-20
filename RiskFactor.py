@@ -1,6 +1,3 @@
-from data import risk_factor_dict
-
-
 class RiskFactor:
     def __init__(self, name, data):
         self.name = name

@@ -21,6 +21,7 @@ class Menu:
             try:
                 answer = input(': ')
                 if type(self.variants) == int:
+                    answer = answer.replace('')
                     answer = float(answer)
                 elif type(self.variants) == dict:
                     answer = self.variants[int(answer)]
