@@ -5,7 +5,7 @@ import DataBase
 # задроч с кейборд интеррапт на написании имени пациентки
 
 # mенюшка новый пациент
-A = Patient(height=160, weight=57)
+A = Patient(height=0, weight=0)
 #A = Patient()
 A.input_patient_data()
 A.count_risk_factors(answers={'fetus': '', 'bladder': '', 'back_discomfort': ''})
@@ -17,9 +17,9 @@ db = DataBase.DataBase()
 #now
 try:
     questionnaire_flag = True if input("Do you answer a some questions? Press y or n and enter\n: ") == 'y' else False
-    db.write_patient_data_to_file(A.patient_data, questionnaire_flag)
+    db.write_patient_data_to_file(A.patient_data, 'new', questionnaire_flag)
 except KeyboardInterrupt:
-    db.write_patient_data_to_file(A.patient_data, questionnaire_flag=False)
+    db.write_patient_data_to_file(A.patient_data, 'new', questionnaire_flag=False)
 
 #later = exit
 

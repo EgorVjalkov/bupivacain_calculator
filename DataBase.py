@@ -1,5 +1,4 @@
 import csv
-import os
 from data import patient_file_questionnaire
 from Menu import Menu
 
@@ -27,9 +26,9 @@ class DataBase:
             menu = Menu(question='Change a patient', variants=list(self.not_finished_patients.keys()))
             menu.print_a_question()
             menu.print_variants()
-            changed_patient = menu.get_user_answer()
-            changed_patient_index = list(self.db.keys()).index(changed_patient)
-            return changed_patient_index
+            changed_patient_id = menu.get_user_answer()
+            changed_patient_index = list(self.db.keys()).index(changed_patient_id)
+            return self.db[changed_patient_id], changed_patient_index
 
     def answer_the_questionnaire(self, questionnaire, patient_with_missing_data=()):
         # добавь логику, чтоб анткета старотовала не сначала, добавь командв чтоб можно было б дописать или переписать
@@ -46,7 +45,7 @@ class DataBase:
             return answers_dict
         return answers_dict
 
-    def write_patient_data_to_file(self, patient_data, behavior, questionnaire_flag):
+    def write_patient_data_to_file(self, patient_data=(), behavior='new', questionnaire_flag=False):
         if behavior == 'new':
             head_of_frame = list(patient_data.keys()) + list(patient_file_questionnaire)
             with open(self.database_path, 'a+') as database:
@@ -66,7 +65,9 @@ class DataBase:
                         patient_answers.extend(list(self.answer_the_questionnaire(patient_file_questionnaire).values()))
                     else:
                         patient_answers = list(patient_data.values())
-
                     database_writer.writerow(patient_answers)
-        else:
-            pass
+        elif behavior == 'add':
+            data, index = self.change_patient_with_missing_data_and_get_index()
+            missing_data_columns = self.head[len(data):]
+            print(missing_data_columns)
+# нужно здесь доделать - запуск в цикл анкеты с определенными вопросами

@@ -1,6 +1,7 @@
 from data import risk_factor_dict
 from RiskFactor import RiskFactor
 from datetime import datetime
+from Menu import Menu
 
 
 class Patient:
@@ -19,11 +20,15 @@ class Patient:
         self.patient_data = {'datetime': self.datetime, 'name': self.patient_name, 'height': self.height, 'weight': self.weight}
 
     def input_patient_data(self):
-        if not self.height:# сделвй инпуты через меню
-            self.height = int(input('pregnant`s height?\n'))
+        if not self.height:
+            menu = Menu(question='pregnant`s height?', variants=0)
+            menu.print_a_question()
+            self.height = menu.get_user_answer()
             self.patient_data['height'] = self.height
         if not self.weight:
-            self.weight = int(input('pregnant`s weight?\n'))
+            menu = Menu(question='pregnant`s weight?', variants=0)
+            menu.print_a_question()
+            self.weight = menu.get_user_answer()
             self.patient_data['weight'] = self.weight
         return self.height, self.weight
 
