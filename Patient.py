@@ -21,12 +21,12 @@ class Patient:
 
     def input_patient_data(self):
         if not self.height:
-            menu = Menu(question='pregnant`s height?', variants=0)
+            menu = Menu(question='patient`s height', variants=0)
             menu.print_a_question()
             self.height = menu.get_user_answer()
             self.patient_data['height'] = self.height
         if not self.weight:
-            menu = Menu(question='pregnant`s weight?', variants=0)
+            menu = Menu(question='patient`s weight', variants=0)
             menu.print_a_question()
             self.weight = menu.get_user_answer()
             self.patient_data['weight'] = self.weight
