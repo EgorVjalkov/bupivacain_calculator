@@ -21,9 +21,10 @@ class RiskFactor:
         return self.risk_factor_data
 
     def input_risk_factor_and_get_count(self):
-        menu = Menu(variants=self.risk_factor_dict, description=self.description)
+        interpretaiton_list = {k: self.risk_factor_dict[k]['inter'] for k in self.risk_factor_dict}
+        menu = Menu(variants=interpretaiton_list, description=self.description)
         menu.print_variants()
         answer = menu.get_user_answer()
-        self.risk_factor_data['interpretation'] = answer['inter']
-        self.risk_factor_data['count'] = answer['count']
+        self.risk_factor_data['interpretation'] = answer
+        self.risk_factor_data['count'] = {k: self.risk_factor_dict[k] for k in self.risk_factor_dict if answer in self.risk_factor_dict[k]}['count']
         return self.risk_factor_data

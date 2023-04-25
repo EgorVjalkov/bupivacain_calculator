@@ -69,6 +69,8 @@ class DataBase:
 
         elif behavior == 'add':
             patient_id = self.change_patient_with_missing_data_and_get_index()
+            if not patient_id:
+                return
             patient_answers = self.db[patient_id]
             missing_questions = self.head[len(patient_answers):]
             missing_questions = {k: patient_file_questionnaire[k] for k in missing_questions}
