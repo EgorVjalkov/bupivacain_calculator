@@ -6,7 +6,7 @@ from Menu import Menu
 class DataBase:
     def __init__(self, database_path=''):
         if not database_path:
-            self.database_path = 'patients/patients2.csv'
+            self.database_path = 'patients/patients.csv'
         with open(self.database_path, 'r') as database:
             self.db = list(csv.reader(database, delimiter=','))
             if not self.db:
@@ -14,15 +14,19 @@ class DataBase:
                 self.patients_with_missing_data = {}
             else:
                 self.head = self.db[0]
+                print(self.head)
                 get_patient_id = lambda i: ' '.join(i[:2])
                 self.db = {get_patient_id(i): i for i in self.db}
-                self.patients_with_missing_data = {k: self.db[k] for k in self.db if len(self.db[k]) < len(self.head)}
 
-    def change_patient_with_missing_data_and_get_index(self):
-        if not self.patients_with_missing_data:
+    def get_patients_with_missing_data(self):
+        patients_with_missing_data = {k: self.db[k] for k in self.db if len(self.db[k]) < len(self.head)}
+        return patients_with_missing_data
+
+    def change_patient_with_missing_data_and_get_index(self, patients_with_missing_data):
+        if not patients_with_missing_data:
             return False
         else:
-            menu = Menu(question='Change a patient', variants=list(self.patients_with_missing_data.keys()))
+            menu = Menu(question='Change a patient', variants=list(patients_with_missing_data.keys()))
             menu.print_a_question()
             menu.print_variants()
             changed_patient_id = menu.get_user_answer()
@@ -54,7 +58,7 @@ class DataBase:
                 else:
                     if self.head != head_of_frame:
                         print('head of frame is not matched with patient data')
-                        database_writer.writerow(['*']*len(head_of_frame))
+                        #database_writer.writerow(['*']*len(head_of_frame))
                         database_writer.writerow(head_of_frame)
                 if questionnaire_flag:
                     if patient_data['name'] == 'noname':
@@ -67,7 +71,7 @@ class DataBase:
                 database_writer.writerow(patient_answers)
 
         elif behavior == 'add':
-            patient_id = self.change_patient_with_missing_data_and_get_index()
+            patient_id = self.change_patient_with_missing_data_and_get_index(self.get_patients_with_missing_data())
             if not patient_id:
                 print('You don`t have patients with missing data\n')
                 return
@@ -88,3 +92,8 @@ class DataBase:
             with open(self.database_path, 'w') as database:
                 database_writer = csv.writer(database)
                 database_writer.writerows(db_reader)
+
+    def refactor(self):
+        self.head = self.db['datetime name']
+        self.write_patient_data_to_file(behavior='add')
+        # здесь сложно. нужно отработать через дикт райтер как таблицу
