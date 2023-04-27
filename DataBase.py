@@ -2,6 +2,7 @@ import csv
 from data import patient_file_questionnaire
 from Menu import Menu
 
+
 # здесь нужно придумать с базой данный. чтоб при проблемах с фреймом пилил новую и все!
 class DataBase:
     def __init__(self, database_path=''):
