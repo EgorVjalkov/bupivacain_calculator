@@ -1,10 +1,11 @@
+import data
 from Menu import Menu
 class RiskFactor:
     def __init__(self, name, data):
         self.name = name
-        self.risk_factor_dict = data['risk_factor_dict']
-        if 'description' in data:
-            self.description = data['description']
+        self.risk_factor_dict = data[name]['risk_factor_dict']
+        if 'description' in data[name]:
+            self.description = data[name]['description']
 
         self.risk_factor_data = {'name': self.name}
 
@@ -21,10 +22,16 @@ class RiskFactor:
         return self.risk_factor_data
 
     def input_risk_factor_and_get_count(self):
-        interpretaiton_list = {k: self.risk_factor_dict[k]['inter'] for k in self.risk_factor_dict}
-        menu = Menu(variants=interpretaiton_list, description=self.description)
+        interpretation_list = {k: self.risk_factor_dict[k]['inter'] for k in self.risk_factor_dict}
+        menu = Menu(variants=interpretation_list, description=self.description)
         menu.print_variants()
         answer = menu.get_user_answer()
         self.risk_factor_data['interpretation'] = answer
-        self.risk_factor_data['count'] = {k: self.risk_factor_dict[k] for k in self.risk_factor_dict if answer in self.risk_factor_dict[k]}['count']
+        for k in self.risk_factor_dict:
+            if answer in self.risk_factor_dict[k].values():
+                self.risk_factor_data['count'] = self.risk_factor_dict[k]['count']
         return self.risk_factor_data
+
+
+#a = RiskFactor('fetus', data.risk_factor_dict)
+#a.input_risk_factor_and_get_count()

@@ -37,7 +37,10 @@ class Menu:
                     if self.unique_answers_flag:
                         answer = self.variants[answer]
                     else:
-                        answer = self.variants[int(answer)]
+                        if 'enter' in self.variants[int(answer)]:
+                            answer = input(': ')
+                        else:
+                            answer = self.variants[int(answer)]
                 break
             except KeyError:
                 print('*********input error!*********')

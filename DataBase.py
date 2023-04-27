@@ -2,12 +2,12 @@ import csv
 from data import patient_file_questionnaire
 from Menu import Menu
 
-
+# здесь нужно придумать с базой данный. чтоб при проблемах с фреймом пилил новую и все!
 class DataBase:
     def __init__(self, database_path=''):
         if not database_path:
-            self.database_path = 'patients/patients.csv'
-        with open(self.database_path, 'r+') as database:
+            self.database_path = 'patients/patients2.csv'
+        with open(self.database_path, 'r') as database:
             self.db = list(csv.reader(database, delimiter=','))
             if not self.db:
                 self.head = []
@@ -17,11 +17,9 @@ class DataBase:
                 get_patient_id = lambda i: ' '.join(i[:2])
                 self.db = {get_patient_id(i): i for i in self.db}
                 self.patients_with_missing_data = {k: self.db[k] for k in self.db if len(self.db[k]) < len(self.head)}
-            # недописанные записи надо сделать чтоб дописывал, т.е. снова кидал их в цикл анкеты
 
     def change_patient_with_missing_data_and_get_index(self):
         if not self.patients_with_missing_data:
-            print('You don`t have patients with missing data')
             return False
         else:
             menu = Menu(question='Change a patient', variants=list(self.patients_with_missing_data.keys()))
@@ -41,35 +39,37 @@ class DataBase:
                     menu.print_variants()
                 answers_dict[question] = menu.get_user_answer()
         except KeyboardInterrupt:
+            print()
             return answers_dict
         return answers_dict
 
     def write_patient_data_to_file(self, patient_data={}, behavior='new', questionnaire_flag=False):
-        patient_answers = list(patient_data.values())
         if behavior == 'new':
             head_of_frame = list(patient_data.keys()) + list(patient_file_questionnaire)
-            with open(self.database_path, 'a+') as database:
+            with open(self.database_path, 'a') as database:
                 database_writer = csv.writer(database)
 
                 if not self.head:
                     database_writer.writerow(head_of_frame)
                 else:
                     if self.head != head_of_frame:
+                        print('head of frame is not matched with patient data')
                         database_writer.writerow(['*']*len(head_of_frame))
                         database_writer.writerow(head_of_frame)
-
-                    if questionnaire_flag:
-                        if patient_data['name'] == 'noname':
-                            patient_data['name'] = input('Enter patient`s name\n: ')
-                        patient_answers.extend(list(self.answer_the_questionnaire(patient_file_questionnaire).values()))
-                    else:
-                        patient_answers = list(patient_data.values())
+                if questionnaire_flag:
+                    if patient_data['name'] == 'noname':
+                        patient_data['name'] = input('Enter patient`s name\n: ')
+                    patient_answers = list(patient_data.values())
+                    patient_answers.extend(list(self.answer_the_questionnaire(patient_file_questionnaire).values()))
+                else:
+                    patient_answers = list(patient_data.values())
 
                 database_writer.writerow(patient_answers)
 
         elif behavior == 'add':
             patient_id = self.change_patient_with_missing_data_and_get_index()
             if not patient_id:
+                print('You don`t have patients with missing data\n')
                 return
             patient_answers = self.db[patient_id]
             missing_questions = self.head[len(patient_answers):]

@@ -40,7 +40,7 @@ class Patient:
     # counting sum of factors
     def count_risk_factors(self, answers=()):
         for rf in self.risk_factors:
-            rf = RiskFactor(rf, risk_factor_dict[rf])
+            rf = RiskFactor(rf, risk_factor_dict)
             if rf.name == 'bmi':
                 self.get_bmi()
                 self.patient_data['bmi'] = self.bmi
