@@ -6,7 +6,7 @@ from Menu import Menu
 class DataBase:
     def __init__(self, database_path=''):
         if not database_path:
-            self.database_path = 'patients/patients2.csv'
+            self.database_path = 'patients/patients.csv'
         with open(self.database_path, 'r') as database:
             self.db = list(csv.reader(database, delimiter=','))
             if not self.db:
