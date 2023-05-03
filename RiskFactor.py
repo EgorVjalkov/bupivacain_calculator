@@ -9,9 +9,11 @@ class RiskFactor:
 
         self.risk_factor_data = {'name': self.name}
 
-    def get_bmi_risk_count(self, bmi):
+    def get_bmi_risk_count(self, bmi, behavior=''):
         for k in self.risk_factor_dict:
             if bmi < k:
+                if behavior == 'blood vol':
+                    return self.risk_factor_dict[k]['blood_vol_coef']
                 self.risk_factor_data['interpretation'] = self.risk_factor_dict[k]['inter']
                 self.risk_factor_data['count'] = self.risk_factor_dict[k]['count']
                 return self.risk_factor_data

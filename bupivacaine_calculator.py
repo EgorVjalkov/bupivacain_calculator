@@ -11,17 +11,28 @@ try:
         answer = gm.get_user_answer()
         db = DataBase.DataBase()
         if answer == 'new patient':
-            #A = Patient(height=170, weight=70)
-            A = Patient()
+            A = Patient(height=170, weight=70)
+            A.count_risk_factors(answers={'fetus': 'n', 'bladder': 'n', 'back_discomfort': 'n'})
+            # A = Patient()
+            # A.count_risk_factors(answers={})
             A.input_patient_data()
-            #A.count_risk_factors(answers={'fetus': '', 'bladder': '', 'back_discomfort': ''})
-            A.count_risk_factors(answers={})
-            A.get_bupivacaine_dose(A.count_a_sum(), bupivacaine_dosage)
-            try:
-                q = True if input("Do you answer a some questions? Press 'y' or 'n' and enter\n: ") == 'y' else False
-                db.write_patient_data_to_file(A.patient_data, 'new', questionnaire_flag=q)
-            except KeyboardInterrupt:
-                db.write_patient_data_to_file(A.patient_data, 'new')
+
+            while True:
+                sm = Menu(question='What do you want', variants=('count dose of local anesthetic', 'patient is bleeding'))
+                sm.print_variants()
+                sm.print_variants()
+                second_answer = sm.get_user_answer()
+
+                if second_answer == 'count dose of local anesthetic':
+                    A.get_bupivacaine_dose(A.count_a_sum(), bupivacaine_dosage)
+                    try:
+                        q = True if input("Do you answer a some questions? Press 'y' or 'n' and enter\n: ") == 'y' else False
+                        db.write_patient_data_to_file(A.patient_data, 'new', questionnaire_flag=q)
+                    except KeyboardInterrupt:
+                        db.write_patient_data_to_file(A.patient_data, 'new')
+
+                elif second_answer == 'patient is bleeding':
+                    A.count_blood_volume()
 
         elif answer == 'choose last patient and fill questionnaire':
             db.write_patient_data_to_file(behavior='add')

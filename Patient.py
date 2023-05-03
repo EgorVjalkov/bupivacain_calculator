@@ -1,3 +1,4 @@
+import data
 from data import risk_factor_dict
 from RiskFactor import RiskFactor
 from datetime import datetime
@@ -33,8 +34,8 @@ class Patient:
         return self.height, self.weight
 
     # bmi
-    def get_bmi(self):
-        self.bmi = round(self.weight/pow(self.height/100, 2), 1)
+    def get_bmi(self, weight):
+        self.bmi = round(weight/pow(self.height/100, 2), 1)
         return self.bmi
 
     # counting sum of factors
@@ -42,7 +43,7 @@ class Patient:
         for rf in self.risk_factors:
             rf = RiskFactor(rf, risk_factor_dict)
             if rf.name == 'bmi':
-                self.get_bmi()
+                self.get_bmi(self.weight)
                 self.patient_data['bmi'] = self.bmi
                 rf_dict = rf.get_bmi_risk_count(self.bmi)
                 print(f'bmi is {self.bmi} ({rf_dict["interpretation"]})')
@@ -98,8 +99,23 @@ class Patient:
 
         return counted_dose
 
+    def count_blood_volume(self):
+        m = Menu(question='What parameter use for counting blood volume?', variants=data.blood_vol_menu.keys())
+        m.print_a_question()
+        m.print_variants()
+        answer = m.get_user_answer()
+        m2 = Menu(question=answer, variants=data.blood_vol_menu[answer]['default'])
+        answer2 = m2.get_user_answer()
+        weight_before_pregnancy = eval(data.blood_vol_menu[answer]['count'])
+        bmi = self.get_bmi(weight_before_pregnancy)
+        blood_vol_coef = RiskFactor('bmi', data.risk_factor_dict).get_bmi_risk_count(bmi, 'blood vol')
+        return blood_vol_coef * self.weight
+
+
 
     # def get_bupivacaine_fastly(self, code):
         # code_list = code.split()
         # code_keys = [self.height, self.weight, self.fetus, self.bladder, self.back_discomfort]
 
+pat = Patient(height=150, weight=78)
+print(pat.count_blood_volume())

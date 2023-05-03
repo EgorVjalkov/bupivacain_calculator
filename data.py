@@ -1,12 +1,12 @@
 risk_factor_dict = {
     'bmi': {
         'risk_factor_dict': {
-            18.5: {'inter': 'deficit', 'count': -1},
-            25.0: {'inter': 'normal', 'count': -1},
-            30.0: {'inter': 'overage', 'count': 0},
-            35.0: {'inter': 'obesity 1', 'count': 1},
-            40.0: {'inter': 'obesity 2', 'count': 2},
-            100.0: {'inter': 'obesity 3', 'count': 3}}},
+            18.5: {'inter': 'deficit', 'count': -1, 'blood_vol_coef': 100},
+            25.0: {'inter': 'normal', 'count': -1, 'blood_vol_coef': 100},
+            30.0: {'inter': 'overage', 'count': 0, 'blood_vol_coef': 100},
+            35.0: {'inter': 'obesity 1', 'count': 1, 'blood_vol_coef': 100},
+            40.0: {'inter': 'obesity 2', 'count': 2, 'blood_vol_coef': 85},
+            100.0: {'inter': 'obesity 3', 'count': 3, 'blood_vol_coef': 85}}},
 
     'fetus': {
         'risk_factor_dict': {
@@ -28,6 +28,9 @@ risk_factor_dict = {
             'n': {'inter': 'NOT discomfort in the position on the back', 'count': 0}},
         'description': 'pregnant has'}
 }
+blood_vol_menu = {
+    'patient`s weight before pregnancy, kg': {'default': 0, 'count': 'answer2'},
+    'pregnancy-related weight gain, kg': {'default': 0, 'count': 'self.weight - answer2'}}
 
 bupivacaine_dosage = {
     145: [1.5, 1.4, 1.4, 1.3, 1.2, 1.1, 1.0],
