@@ -14,7 +14,7 @@ class DataBase:
                 self.patients_with_missing_data = {}
             else:
                 self.head = self.db[0]
-                print(self.head)
+                #print(self.head)
                 get_patient_id = lambda i: ' '.join(i[:2])
                 self.db = {get_patient_id(i): i for i in self.db}
 

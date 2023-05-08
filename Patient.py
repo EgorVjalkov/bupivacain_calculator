@@ -19,6 +19,7 @@ class Patient:
         self.factors_count_dict = {}
         self.sum_of_factors = 0
         self.patient_data = {'datetime': self.datetime, 'name': self.patient_name, 'height': self.height, 'weight': self.weight}
+        self.blood_volume = 0
 
     def input_patient_data(self):
         if not self.height:
@@ -31,7 +32,14 @@ class Patient:
             menu.print_a_question()
             self.weight = menu.get_user_answer()
             self.patient_data['weight'] = self.weight
-        return self.height, self.weight
+        self.blood_volume = self.count_blood_volume()
+        if self.blood_volume:
+            blood_volume_15 = self.get_clinical_bleed_volume()
+            print(f'patient`s blood volume is {self.blood_volume}')
+            print(f'clinical bleed volume is {blood_volume_15}')
+            print(f'critical bleed volume is {blood_volume_15 * 2}\n')
+
+        return self.height, self.weight, self.blood_volume
 
     # bmi
     def get_bmi(self, weight):
@@ -104,18 +112,19 @@ class Patient:
         m.print_a_question()
         m.print_variants()
         answer = m.get_user_answer()
-        m2 = Menu(question=answer, variants=data.blood_vol_menu[answer]['default'])
+        if answer == 'pass':
+            return 0
+        m2 = Menu(question=answer, variants=0)
         answer2 = m2.get_user_answer()
-        weight_before_pregnancy = eval(data.blood_vol_menu[answer]['count'])
+        weight_before_pregnancy = eval(data.blood_vol_menu[answer])
         bmi = self.get_bmi(weight_before_pregnancy)
         blood_vol_coef = RiskFactor('bmi', data.risk_factor_dict).get_bmi_risk_count(bmi, 'blood vol')
-        return blood_vol_coef * self.weight
+        self.blood_volume = blood_vol_coef * weight_before_pregnancy
+        return self.blood_volume
 
-
-
-    # def get_bupivacaine_fastly(self, code):
-        # code_list = code.split()
-        # code_keys = [self.height, self.weight, self.fetus, self.bladder, self.back_discomfort]
+    def get_clinical_bleed_volume(self):
+        blood_volume_15 = 0.15 * self.blood_volume
+        return blood_volume_15
 
 pat = Patient(height=150, weight=78)
-print(pat.count_blood_volume())
+#print(pat.count_blood_volume())

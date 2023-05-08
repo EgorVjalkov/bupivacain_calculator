@@ -29,8 +29,9 @@ risk_factor_dict = {
         'description': 'pregnant has'}
 }
 blood_vol_menu = {
-    'patient`s weight before pregnancy, kg': {'default': 0, 'count': 'answer2'},
-    'pregnancy-related weight gain, kg': {'default': 0, 'count': 'self.weight - answer2'}}
+    'patient`s weight before pregnancy, kg': 'answer2',
+    'pregnancy-related weight gain, kg': 'self.weight - answer2',
+    'pass': '0'}
 
 bupivacaine_dosage = {
     145: [1.5, 1.4, 1.4, 1.3, 1.2, 1.1, 1.0],
