@@ -2,47 +2,53 @@ from Patient import Patient
 from data import bupivacaine_dosage
 import DataBase
 from Menu import Menu
-# здесь нужно поменять очередность расчетов: зачем считать факторы риска для СМА если у нас кровопотеря!
 
 try:
     while True:
-        print('Greetings in the bupivacaine calculator')
-        gm = Menu(variants=('new patient', 'choose last patient and fill questionnaire', 'exit'))
-        gm.print_variants()
-        answer = gm.get_user_answer()
+        print('Greetings!\n')
+        main_m = Menu(topic='С чего начать работу?',
+                      variants=('новый пациент', 'выбрать пациента из базы данных, чтобы заполнить анкету', 'выход'))
+        main_m.print_a_topic()
+        main_m.print_variants()
+        main_a = main_m.get_user_answer()
         db = DataBase.DataBase()
-        if answer == 'new patient':
+        if main_a == 'новый пациент':
             A = Patient(height=170, weight=70)
-            A.count_risk_factors(answers={'fetus': 'n', 'bladder': 'n', 'back_discomfort': 'n'})
-            # A = Patient()
-            # A.count_risk_factors(answers={})
+            #A = Patient()
             A.input_patient_data()
+            A.count_patient_data()
+            A.print_patient_data()
 
             while True:
-                sm = Menu(question='What do you want?',
-                          variants=('count dose of local anesthetic', 'patient is bleeding', 'back to main menu'))
-                sm.print_a_question()
-                sm.print_variants()
-                second_answer = sm.get_user_answer()
+                second_m = Menu(topic='Клническая ситуация?',
+                                variants=('спинальная анестезия', 'острая кровопотеря', 'назад в основное меню'))
+                second_m.print_a_topic()
+                second_m.print_variants()
+                second_a = second_m.get_user_answer()
 
-                if second_answer == 'count dose of local anesthetic':
+                if second_a == 'спинальная анестезия':
+                    # A.count_risk_factors(answers={})
+                    A.count_risk_factors(answers={'fetus': 'n', 'bladder': 'n', 'back_discomfort': 'n'})
                     A.get_bupivacaine_dose(A.count_a_sum(), bupivacaine_dosage)
-                    try:
-                        q = True if input("Do you answer a some questions? Press 'y' or 'n' and enter\n: ") == 'y' else False
-                        db.write_patient_data_to_file(A.patient_data, 'new', questionnaire_flag=q)
-                    except KeyboardInterrupt:
-                        db.write_patient_data_to_file(A.patient_data, 'new')
+                    # здесь нужно пересмотреть Menu
+                    third_m = Menu(topic="Хотите ли Вы заполнить анкету?", variants={'да': True, 'нет': False})
+                    third_m.print_a_topic()
+                    third_m.print_variants()
+                    third_a = third_m.get_user_answer()
+                    db.write_patient_data_to_file(A.patient_data_for_spinal, 'new', questionnaire_flag=third_a)
 
-                elif second_answer == 'patient is bleeding':
+                elif second_a == 'острая кровопотеря':
+                    A.count_patient_data()
+                    A.print_patient_data()
                     pass # сюда можно всписать градацию шока на основе кровопотери, индекс алговера, расчеты по препаратам и всякое
 
                 else:
                     break
 
-        elif answer == 'choose last patient and fill questionnaire':
+        elif main_a == 'choose last patient and fill questionnaire':
             db.write_patient_data_to_file(behavior='add')
 
-        elif answer == 'exit':
+        elif main_a == 'выход':
             print('See you!')
             break
 except KeyboardInterrupt:

@@ -1,8 +1,6 @@
 class Menu:
-    def __init__(self, question='', variants=(), description=''):
-        self.question = question
-        self.question_dict = {int: f'{self.question}? Enter a num', str: f'{self.question}?'}
-
+    def __init__(self, topic='', variants=(), description=''):
+        self.topic = topic
         self.variants = variants
         if self.variants:
             if type(self.variants) == dict:
@@ -13,18 +11,15 @@ class Menu:
 
         self.description = description
 
-    def print_a_question(self):
-        if self.question:
-            try:
-                print(self.question_dict[type(self.variants)])
-            except KeyError:
-                print(self.question)
+    def print_a_topic(self):
+        if self.topic:
+            print(self.topic)
 
     def print_variants(self):
         if self.unique_answers_flag:
-            print_variants = {print(f'press "{k}" if {self.description} {self.variants[k]}') for k in self.variants}
+            print_variants = {print(f'нажмите "{k}" if {self.description} {self.variants[k]}') for k in self.variants}
         else:
-            print_variants = {print(f'press {k} - {self.variants[k]}') for k in self.variants}
+            print_variants = {print(f'нажмите {k} - {self.variants[k]}') for k in self.variants}
 
     def get_user_answer(self):
         while True:
@@ -43,8 +38,8 @@ class Menu:
                             answer = self.variants[int(answer)]
                 break
             except KeyError:
-                print('*********input error!*********')
+                print('*********ошибка ввода!*********')
             except ValueError:
-                print('*********input error!*********')
+                print('*********ошибка ввода!*********')
 
         return answer
