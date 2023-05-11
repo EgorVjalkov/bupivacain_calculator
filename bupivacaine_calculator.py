@@ -31,11 +31,12 @@ try:
                     A.count_risk_factors(answers={'fetus': 'n', 'bladder': 'n', 'back_discomfort': 'n'})
                     A.get_bupivacaine_dose(A.count_a_sum(), bupivacaine_dosage)
                     # здесь нужно пересмотреть Menu
-                    third_m = Menu(topic="Хотите ли Вы заполнить анкету?", variants={'да': True, 'нет': False})
+                    third_m = Menu(topic="Хотите ли Вы заполнить анкету?", variants=('да', 'нет'))
                     third_m.print_a_topic()
                     third_m.print_variants()
                     third_a = third_m.get_user_answer()
-                    db.write_patient_data_to_file(A.patient_data_for_spinal, 'new', questionnaire_flag=third_a)
+                    quest_flag = True if third_a == 'да' else False
+                    db.write_patient_data_to_default_db(A.patient_data_for_spinal, 'new', questionnaire_flag=quest_flag)
 
                 elif second_a == 'острая кровопотеря':
                     A.count_patient_data()
@@ -46,7 +47,7 @@ try:
                     break
 
         elif main_a == 'choose last patient and fill questionnaire':
-            db.write_patient_data_to_file(behavior='add')
+            db.write_patient_data_to_default_db(behavior='add')
 
         elif main_a == 'выход':
             print('See you!')

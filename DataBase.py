@@ -1,4 +1,5 @@
 import csv
+import os
 from data import patient_file_questionnaire
 from Menu import Menu
 
@@ -7,6 +8,7 @@ class DataBase:
     def __init__(self, database_path=''):
         if not database_path:
             self.database_path = 'patients/patients.csv'
+        self.change_db = False
         self.temp_database_count = 0
 
         with open(self.database_path, 'r') as database:
@@ -49,19 +51,20 @@ class DataBase:
             return answers_dict
         return answers_dict
 
-    def make_a_new_database(self):
+    def make_temp_db_like_default(self):
         self.temp_database_count += 1
         self.database_path = f'patients/temp_database_{self.temp_database_count}.csv'
-        self.head = []
-        self.patients_with_missing_data = {}
+        with open(self.database_path, 'w+') as temp_db:
+            self.head = list(csv.reader(temp_db))[1]
+            print(self.head)
+            # остановился здесь!!! проблемы нужно чтоб ридер заглянул во временную дб и снял с нее селф хэд
         return self.database_path, self.head
 
-
-    def write_patient_data_to_file(self, patient_data={}, behavior='new', questionnaire_flag=False):
+    def write_patient_data_to_default_db(self, patient_data={}, behavior='new', questionnaire_flag=False):
         if behavior == 'new':
             head_of_frame = list(patient_data.keys()) + list(patient_file_questionnaire)
             while True:
-                print(self.database_path)
+                self.change_db = False
                 with open(self.database_path, 'a') as database:
                     database_writer = csv.writer(database)
 
@@ -69,20 +72,21 @@ class DataBase:
                         database_writer.writerow(head_of_frame)
                     else:
                         if self.head != head_of_frame:
-                            print('список столбцов не соответствует списку ответов, данные будут помещены во временную базу')
-                            self.make_a_new_database()
-                            print(self.database_path)
+                            print('список столбцов не соответствует списку ответов, данные будут помещены во временную базу\n')
+                            self.make_temp_db_like_default()
+                            self.change_db = True
 
-                    if questionnaire_flag:
-                        if patient_data['name'] == 'noname':
-                            patient_data['name'] = input('Enter patient`s name\n: ')
-                        patient_answers = list(patient_data.values())
-                        patient_answers.extend(list(self.answer_the_questionnaire(patient_file_questionnaire).values()))
-                    else:
-                        patient_answers = list(patient_data.values())
+                    if not self.change_db:
+                        if questionnaire_flag:
+                            if patient_data['name'] == 'noname':
+                                patient_data['name'] = input('Enter patient`s name\n: ')
+                            patient_answers = list(patient_data.values())
+                            patient_answers.extend(list(self.answer_the_questionnaire(patient_file_questionnaire).values()))
+                        else:
+                            patient_answers = list(patient_data.values())
 
-                    database_writer.writerow(patient_answers)
-                    break
+                        database_writer.writerow(patient_answers)
+                        break
 
         elif behavior == 'add':
             patient_id = self.change_patient_with_missing_data_and_get_index(self.get_patients_with_missing_data())
@@ -109,5 +113,5 @@ class DataBase:
 
     def refactor(self):
         self.head = self.db['datetime name']
-        self.write_patient_data_to_file(behavior='add')
+        self.write_patient_data_to_default_db(behavior='add')
         # здесь сложно. нужно отработать через дикт райтер как таблицу
