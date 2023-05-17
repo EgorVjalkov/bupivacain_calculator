@@ -46,7 +46,7 @@ try:
                 else:
                     break
 
-        elif main_a == 'choose last patient and fill questionnaire':
+        elif 'выбрать пациента из базы данных' in main_a:
             db.write_patient_data_to_default_db(behavior='add')
 
         elif main_a == 'выход':
