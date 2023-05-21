@@ -1,5 +1,4 @@
 import csv
-import os
 from data import patient_file_questionnaire
 from Menu import Menu
 
@@ -40,7 +39,6 @@ class DataBase:
             if None in i.values():
                 patient_id = f"{i['datetime']} - {i['name']}"
                 patients_with_missing_data[patient_id] = i
-        print(patients_with_missing_data)
         return patients_with_missing_data
 
     def change_patient_with_missing_data_and_get_index(self, patients_with_missing_data):
@@ -51,7 +49,7 @@ class DataBase:
             menu.print_a_topic()
             menu.print_variants()
             changed_patient_id = menu.get_user_answer()
-            return changed_patient_id
+            return patients_with_missing_data[changed_patient_id]
 
     def answer_the_questionnaire(self, questionnaire):
         answers_dict = {}
@@ -96,28 +94,35 @@ class DataBase:
 
         elif behavior == 'add':
             self.open_db()
-            patient_id = self.change_patient_with_missing_data_and_get_index(self.get_patients_with_missing_data())
-            if not patient_id:
+            missing_data = self.change_patient_with_missing_data_and_get_index(self.get_patients_with_missing_data())
+            if not missing_data:
                 print('You don`t have patients with missing data\n')
                 return
-            # здесь нужно подумать все организовать под дикт ридер!
-            patient_answers = self.db[patient_id]
-            missing_questions = self.head[len(patient_answers):]
-            missing_questions = {k: patient_file_questionnaire[k] for k in missing_questions}
-            patient_answers = [input('Enter patient`s name\n: ') if i == 'noname' else i for i in patient_answers]
-            patient_answers.extend(list(self.answer_the_questionnaire(missing_questions).values()))
-            def replacer(patient_id, row, new_row):
-                row_id = ' '.join(row[:2])
-                if row_id == patient_id:
-                    row = new_row
-                return row
 
-            with open(self.database_path, 'r') as database:
-                db_reader = csv.reader(database)
-                db_reader = [replacer(patient_id, row, patient_answers) for row in db_reader]
+            patient_answers = missing_data.copy()
+            if patient_answers['name'] == 'noname':
+                input_name = Menu(topic='Input patient`s name', variants='')
+                input_name.print_a_topic()
+                patient_answers['name'] = input_name.get_user_answer()
+
+            missing_questions = [i for i in patient_answers.keys() if not patient_answers[i]]
+            missing_questions = {i: data.patient_file_questionnaire[i] for i in data.patient_file_questionnaire
+                                 if i in missing_questions}
+            missing_questions = self.answer_the_questionnaire(missing_questions)
+            patient_answers.update(missing_questions)
+
+            def replacer(frame_row, changed_patient_row, new_row):
+                if changed_patient_row == frame_row:
+                    return new_row
+
+            self.db = [replacer(row, missing_data, patient_answers) for row in self.db]
+            self.db = [list(i.values()) for i in self.db]
+            self.db.insert(0, self.head)
+            # наверное здесь диктрайтер может решить проблемы, т.к. чувствуется что писать шапку он в состоянии
+
             with open(self.database_path, 'w') as database:
                 database_writer = csv.writer(database)
-                database_writer.writerows(db_reader)
+                database_writer.writerows(self.db)
 
     def refactor(self):
         self.head = self.db['datetime name']
@@ -127,5 +132,4 @@ class DataBase:
 
 db = DataBase()
 db.open_db()
-patients = db.get_patients_with_missing_data()
-print(db.change_patient_with_missing_data_and_get_index(patients))
+db.write_patient_data_to_default_db(behavior='add')
