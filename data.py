@@ -55,8 +55,8 @@ patient_file_questionnaire = {
     'dose of 0.005% fenylefrine BEFORE delivering, ml': 0,
     'sensory block level AFTER delivering': block_level_list,
     'dose of 0.005% fenylefrine AFTER delivering, ml': 0,
-    'expansion of the scope of surgery': ('enter if True', 'False'),
-    'complaints of pain during surgery': ('enter if True', 'False'),
+    'expansion of the scope of surgery': ('опишите if True', 'False'),
+    'complaints of pain during surgery': ('опишите if True', 'False'),
     'doctor`s estimation': tuple(str(i) for i in range(1, 6)),
     'patient`s estimation': tuple(str(i) for i in range(1, 6)),
     'remark': ''

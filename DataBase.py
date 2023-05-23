@@ -2,7 +2,7 @@ import csv
 from data import patient_file_questionnaire
 from Menu import Menu
 
-# проблемы и сложности с временной бд. создает новую но не пишет в нее зацикливает и пзц
+
 class DataBase:
     def __init__(self):
         self.temp_database_count = 0

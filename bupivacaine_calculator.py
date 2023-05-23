@@ -39,8 +39,11 @@ try:
                     db.write_patient_data_to_default_db(A.patient_data_for_spinal, 'new', questionnaire_flag=quest_flag)
 
                 elif second_a == 'острая кровопотеря':
-                    A.count_patient_data()
+                    A.count_patient_data('bleeding')
                     A.print_patient_data()
+                    if A.input_a_bleed_vol():
+                        A.print_patient_data()
+
                     pass # сюда можно всписать градацию шока на основе кровопотери, индекс алговера, расчеты по препаратам и всякое
 
                 else:
