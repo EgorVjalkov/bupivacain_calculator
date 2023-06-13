@@ -32,7 +32,7 @@ class Menu:
                     if self.unique_answers_flag:
                         answer = self.variants[answer]
                     else:
-                        if 'enter' in self.variants[int(answer)]:
+                        if [i for i in ['введите', 'опишите'] if i in self.variants[int(answer)]]:
                             answer = input(': ')
                         else:
                             answer = self.variants[int(answer)]

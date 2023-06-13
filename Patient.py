@@ -18,6 +18,8 @@ class Patient:
         self.blood_volume = 0
         self.clinical_bleed = 0
         self.critical_bleed = 0
+        self.bleed_volume = 0
+        self.bleed_percent = 0
 
         self.risk_factors = ('bmi', 'fetus', 'bladder', 'back_discomfort')
         self.factors_count_dict = {}
@@ -37,6 +39,21 @@ class Patient:
             self.patient_data_for_spinal[key] = value
             self.patient_data_for_bleeding[key] = value
 
+    def input_a_bleed_vol(self):
+        forth_m = Menu(topic="Объем кровопотери известен?", variants=('если да, то введите объем в мл', 'нет'))
+        forth_m.print_a_topic()
+        forth_m.print_variants()
+        forth_a = forth_m.get_user_answer()
+        self.bleed_volume = int(forth_a) if forth_a != 'нет' else 0
+        if self.bleed_volume:
+            self.bleed_percent = int((self.bleed_volume/self.blood_volume) * 100)
+            self.refresh_data_dicts('bleed_vol', self.bleed_volume, data_dict='bleeding')
+            self.refresh_data_dicts('bleed_percent', self.bleed_percent, data_dict='bleeding')
+            return self.bleed_volume, self.bleed_percent
+        else:
+            #    self.refresh_data_dicts('bleed_vol', 'неизвестно', data_dict='bleeding')
+            return False
+
     def input_patient_data(self):
         if not self.height:
             menu = Menu(topic='Введите показатель роста в сантиметрах', variants=0)
@@ -51,13 +68,13 @@ class Patient:
 
         return self.height, self.weight, self.blood_volume, self.clinical_bleed, self.critical_bleed
 
-    def count_patient_data(self):
+    def count_patient_data(self, behavior=''):
         if not self.bmi:
             self.bmi = self.get_bmi(self.weight)
             self.refresh_data_dicts('bmi', self.bmi)
 
         if not self.blood_volume:
-            self.blood_volume = self.count_blood_volume()
+            self.blood_volume = self.count_blood_volume(behavior)
             if self.blood_volume:
                 self.refresh_data_dicts('blood_vol', self.blood_volume, 'bleeding')
                 self.clinical_bleed = f"{'-'.join(self.count_bleed_volume((10, 15)))}"
@@ -142,8 +159,11 @@ class Patient:
 
         return counted_dose
 
-    def count_blood_volume(self):
-        m = Menu(topic='Что использовать для подсчета ОЦК?', variants=data.blood_vol_menu.keys())
+    def count_blood_volume(self, behavior=''):
+        variants = list(data.blood_vol_menu.keys())
+        if behavior == 'bleeding':
+            variants = [i for i in variants if 'нет необходимости' not in i]
+        m = Menu(topic='Что использовать для подсчета ОЦК?', variants=variants)
         m.print_a_topic()
         m.print_variants()
         answer = m.get_user_answer()
