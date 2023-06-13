@@ -25,8 +25,7 @@ class Patient:
         self.patient_data_for_spinal = \
             {'datetime': self.datetime, 'name': self.patient_name, 'height': self.height, 'weight': self.weight}
         self.patient_data_for_bleeding = self.patient_data_for_spinal.copy()
-        self.patient_data_for_print = {'рост': 'height', 'вес': 'weight', 'ИМТ': 'bmi',
-                'ОЦК': 'blood_vol', 'потеря 10-15% ОЦК': 'clinical_bleed', 'потеря 25-30% ОЦК': 'critical_bleed'}
+        self.translation_dict = data.translation_dict
 # сделай мини фyнкцию чтоб обновлять словари
 
     def refresh_data_dicts(self, key, value, data_dict='all'):
@@ -37,7 +36,6 @@ class Patient:
         elif data_dict == 'all':
             self.patient_data_for_spinal[key] = value
             self.patient_data_for_bleeding[key] = value
-
 
     def input_patient_data(self):
         if not self.height:
@@ -71,8 +69,8 @@ class Patient:
 
     def print_patient_data(self):
         print()
-        for k in self.patient_data_for_print:
-            translate_key = self.patient_data_for_print[k]
+        for k in self.translation_dict:
+            translate_key = self.translation_dict[k]
             if translate_key in self.patient_data_for_bleeding:
                 print(f'{k} - {self.patient_data_for_bleeding[translate_key]}')
         print()
@@ -88,7 +86,7 @@ class Patient:
             rf = RiskFactor(rf, risk_factor_dict)
             if rf.name == 'bmi':
                 rf_dict = rf.get_bmi_risk_count(self.bmi)
-                print(f'bmi is {self.bmi} ({rf_dict["interpretation"]})')
+                print(f'ИМТ - {self.bmi}, ({rf_dict["interpretation"]})')
 
             else:
                 if rf.name in answers and answers[rf.name]:
@@ -110,7 +108,7 @@ class Patient:
             self.sum_of_factors += back_discomfort_count
         elif self.sum_of_factors > 0 and back_discomfort_count:
             self.patient_data_for_spinal['back_discomfort_count'] = 'not using'
-            print('back_discomfort riskfactor is not used')
+            print('данные о дискомфорте в положении на спине не использованы')
 
         self.patient_data_for_spinal['sum'] = self.sum_of_factors
         self.patient_data_for_spinal['limiting sum'] = False
@@ -119,7 +117,7 @@ class Patient:
             self.sum_of_factors = 4
             self.patient_data_for_spinal['limiting sum'] = 4
 
-        print(f'sum of riskfactors is {self.sum_of_factors}', '\n')
+        print(f'сумма факторов риска - {self.sum_of_factors}', '\n')
         return self.sum_of_factors
 
     def get_bupivacaine_dose(self, sum_of_risk, bupivacaine_dosage):
@@ -136,8 +134,11 @@ class Patient:
             rounded_height = self.height
 
         counted_dose = bupivacaine_dosage[rounded_height][sum_of_risk+2]
+        counted_dose_for_sitting = round(counted_dose+0.4, 1)
         self.patient_data_for_spinal['counted dose'] = counted_dose
-        print(f'0,5% spinal heavy bupivacaine dose is {counted_dose}ml\n')
+        self.patient_data_for_spinal['counted dose for sitting'] = counted_dose_for_sitting
+        print(f'0,5% доза тяжелого бупивакаина в положении лежа {counted_dose}ml\n')
+        print(f'0,5% доза тяжелого бупивакаина в положении сидя {counted_dose_for_sitting}ml\n')
 
         return counted_dose
 

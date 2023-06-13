@@ -2,7 +2,7 @@ import csv
 from data import patient_file_questionnaire
 from Menu import Menu
 
-# проблемы и сложности с временной бд. создает новую но не пишет в нее зацикливает и пзц
+
 class DataBase:
     def __init__(self):
         self.temp_database_count = 0
@@ -118,7 +118,6 @@ class DataBase:
             self.db = [replacer(row, missing_data, patient_answers) for row in self.db]
             self.db = [list(i.values()) for i in self.db]
             self.db.insert(0, self.head)
-            # наверное здесь диктрайтер может решить проблемы, т.к. чувствуется что писать шапку он в состоянии
 
             with open(self.database_path, 'w') as database:
                 database_writer = csv.writer(database)

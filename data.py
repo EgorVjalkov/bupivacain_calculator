@@ -1,16 +1,16 @@
 risk_factor_dict = {
     'bmi': {
         'risk_factor_dict': {
-            18.5: {'inter': 'deficit', 'count': -1, 'blood_vol_coef': 100},
-            25.0: {'inter': 'normal', 'count': -1, 'blood_vol_coef': 100},
-            30.0: {'inter': 'overage', 'count': 0, 'blood_vol_coef': 100},
-            35.0: {'inter': 'obesity 1', 'count': 1, 'blood_vol_coef': 100},
-            40.0: {'inter': 'obesity 2', 'count': 2, 'blood_vol_coef': 85},
-            100.0: {'inter': 'obesity 3', 'count': 3, 'blood_vol_coef': 85}}},
+            18.5: {'inter': 'дефицит', 'count': -1, 'blood_vol_coef': 100},
+            25.0: {'inter': 'норма', 'count': -1, 'blood_vol_coef': 100},
+            30.0: {'inter': 'избыток', 'count': 0, 'blood_vol_coef': 100},
+            35.0: {'inter': 'ожирение 1', 'count': 1, 'blood_vol_coef': 100},
+            40.0: {'inter': 'ожирение 2', 'count': 2, 'blood_vol_coef': 85},
+            100.0: {'inter': 'ожирение 3', 'count': 3, 'blood_vol_coef': 85}}},
 
     'fetus': {
         'risk_factor_dict': {
-            'b': {'inter': 'big (fetus weight > 4kg)', 'count': 1},
+            'b': {'inter': 'крупный (вес > 4кг)', 'count': 1},
             'n': {'inter': 'normal (fetus weight > 2.5kg and < 4kg)', 'count': 0},
             's': {'inter': 'small (fetus weight < 2.5kg)', 'count': -1}},
         'description': 'fetus is'},
@@ -28,6 +28,11 @@ risk_factor_dict = {
             'n': {'inter': 'NOT discomfort in the position on the back', 'count': 0}},
         'description': 'pregnant has'}
 }
+
+translation_dict = {'рост': 'height', 'вес': 'weight', 'ИМТ': 'bmi',
+            'по плоду': 'fetus', 'по объему аниотической жидкости': 'bladder', 'по дискомфорту в положении на спине': 'back_discomfort',
+            'ОЦК': 'blood_vol', 'потеря 10-15% ОЦК': 'clinical_bleed', 'потеря 25-30% ОЦК': 'critical_bleed'}
+
 blood_vol_menu = {
     'вес до беременности': 'answer2',
     'прибавку во время беременности': 'self.weight - answer2',

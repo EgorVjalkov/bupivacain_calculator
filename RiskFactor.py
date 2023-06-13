@@ -1,5 +1,7 @@
 import data
 from Menu import Menu
+
+
 class RiskFactor:
     def __init__(self, name, data):
         self.name = name
