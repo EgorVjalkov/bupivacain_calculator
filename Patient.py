@@ -66,7 +66,7 @@ class Patient:
             self.weight = menu.get_user_answer()
             self.refresh_data_dicts('weight', self.weight)
 
-        return self.height, self.weight, self.blood_volume, self.clinical_bleed, self.critical_bleed
+        return self.height, self.weight
 
     def count_patient_data(self, behavior=''):
         if not self.bmi:
