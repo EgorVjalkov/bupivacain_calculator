@@ -1,4 +1,3 @@
-import data
 from Menu import Menu
 
 
@@ -11,7 +10,10 @@ class RiskFactor:
 
         self.risk_factor_data = {'name': self.name}
 
-    def get_bmi_risk_count(self, bmi, behavior=''):
+    def get_bmi_risk_count(self,
+                           bmi: float,
+                           behavior: str = '') -> dict:
+
         for k in self.risk_factor_dict:
             if bmi < k:
                 if behavior == 'blood vol':
@@ -20,13 +22,16 @@ class RiskFactor:
                 self.risk_factor_data['count'] = self.risk_factor_dict[k]['count']
                 return self.risk_factor_data
 
-    def find_risk_factor_with_answer(self, answer):
+    def find_risk_factor_with_answer(self,
+                                     answer: str) -> dict:
+
         self.risk_factor_data['interpretation'] = self.risk_factor_dict[answer]['inter']
         self.risk_factor_data['count'] = self.risk_factor_dict[answer]['count']
         return self.risk_factor_data
 
     def input_risk_factor_and_get_count(self):
-        interpretation_list = {k: self.risk_factor_dict[k]['inter'] for k in self.risk_factor_dict}
+        interpretation_list = {k: self.risk_factor_dict[k]['inter']
+                               for k in self.risk_factor_dict}
         menu = Menu(variants=interpretation_list, description=self.description)
         menu.print_variants()
         answer = menu.get_user_answer()

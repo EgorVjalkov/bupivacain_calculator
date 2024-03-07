@@ -8,7 +8,7 @@ class DataBase:
         self.temp_database_count = 0
         self.head = []
         self.db = {}
-        self.database_path = 'patients/patients.csv'
+        self.database_path = '../patients/patients.csv'
 
     def open_db(self, behavior=''):
         if behavior == 'temp_db':
