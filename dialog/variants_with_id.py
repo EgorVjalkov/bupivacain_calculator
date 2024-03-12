@@ -1,6 +1,6 @@
 funcs = [
-    ('спинальная анестезия', 'count_sma'),
-    ('острая кровопотеря', 'count_bleed')
+    ('спинальная анестезия', 'sma_count'),
+    ('острая кровопотеря', 'blood_vol_count')
 ]
 
 general_patient_data = [
@@ -25,8 +25,8 @@ sma_vars.extend(accessory_patient_data_for_sma)
 
 variants = {
     'funcs': funcs,
-    'bleed_categories': bleed_vars,
-    'sma_categories': sma_vars,
+    'blood_vol_count': bleed_vars,
+    'sma_count': sma_vars,
 }
 
 answers = {
@@ -38,31 +38,3 @@ answers = {
 
 def get_dict_with_variants(key: str) -> dict:
     return {key: variants[key]}
-
-
-class PatientData:
-    def __init__(self, for_func: str):
-        self.for_func = for_func
-        self.necessary_keys = [i[1] for i in variants[self.for_func]]
-
-    def filled(self, data_from_ctx: dict):
-        for i in self.necessary_keys:
-            if i not in data_from_ctx:
-                return False
-        return True
-
-
-patient_data_for_bleed = PatientData('bleed_categories')
-
-
-class Category:
-    def __init__(self, name):
-        self.name = name
-
-    @property
-    def answer(self):
-        return f'Введите показатель {answers[self.name]}'
-
-
-def get_dict_with_answer(key: str) -> dict:
-    return {key: f'Введите показатель {answers[key]}'}

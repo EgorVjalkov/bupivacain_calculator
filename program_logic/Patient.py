@@ -1,18 +1,18 @@
-import data
-from data import risk_factor_dict
-from RiskFactor import RiskFactor
+from program_logic import data
+from program_logic.data import risk_factor_dict
+from program_logic.RiskFactor import RiskFactor
 from datetime import datetime
-from Menu import Menu
 
 
 class Patient:
 
-    def __init__(self, patient_name='noname', height=0, weight=0):
+    def __init__(self, patient_name='noname', height=0, weight=0, weight_before=0):
         dt = datetime.today()
         self.datetime = dt.strftime('%d.%m.%Y %H:%M')
         self.patient_name = patient_name
         self.height = height
         self.weight = weight
+        self.weight_before_pregnancy = weight_before
         self.bmi = 0.0
 
         self.blood_volume = 0
@@ -24,11 +24,22 @@ class Patient:
         self.risk_factors = ('bmi', 'fetus', 'bladder', 'back_discomfort')
         self.factors_count_dict = {}
         self.sum_of_factors = 0
-        self.patient_data_for_spinal = \
-            {'datetime': self.datetime, 'name': self.patient_name, 'height': self.height, 'weight': self.weight}
-        self.patient_data_for_bleeding = self.patient_data_for_spinal.copy()
-        self.translation_dict = data.translation_dict
-# сделай мини фyнкцию чтоб обновлять словари
+
+        self.patient_dict = {
+            'datetime': self.datetime,
+            'name': self.patient_name,
+            'height': self.height,
+            'weight': self.weight,
+            'weight bofore pregnancy': self.weight_before_pregnancy
+        }
+
+        self.patient_data_for_spinal = {}
+        self.patient_data_for_bleeding = {}
+
+    # сделай мини фyнкцию чтоб обновлять словари
+
+    def __repr__(self):
+        return f'Patient: {self.patient_data_for_bleeding}'
 
     def refresh_data_dicts(self, key, value, data_dict='all'):
         if data_dict == 'spinal':
@@ -40,13 +51,8 @@ class Patient:
             self.patient_data_for_bleeding[key] = value
 
     def input_a_bleed_vol(self):
-        forth_m = Menu(topic="Объем кровопотери известен?", variants=('если да, то введите объем в мл', 'нет'))
-        forth_m.print_a_topic()
-        forth_m.print_variants()
-        forth_a = forth_m.get_user_answer()
-        self.bleed_volume = int(forth_a) if forth_a != 'нет' else 0
         if self.bleed_volume:
-            self.bleed_percent = int((self.bleed_volume/self.blood_volume) * 100)
+            self.bleed_percent = int((self.bleed_volume / self.blood_volume) * 100)
             self.refresh_data_dicts('bleed_vol', self.bleed_volume, data_dict='bleeding')
             self.refresh_data_dicts('bleed_percent', self.bleed_percent, data_dict='bleeding')
             return self.bleed_volume, self.bleed_percent
@@ -54,47 +60,9 @@ class Patient:
             #    self.refresh_data_dicts('bleed_vol', 'неизвестно', data_dict='bleeding')
             return False
 
-    def input_patient_data(self):
-        if not self.height:
-            menu = Menu(topic='Введите показатель роста в сантиметрах', variants=0)
-            menu.print_a_topic()
-            self.height = menu.get_user_answer()
-            self.refresh_data_dicts('height', self.height)
-        if not self.weight:
-            menu = Menu(topic='Введите показатель веса в килограммах', variants=0)
-            menu.print_a_topic()
-            self.weight = menu.get_user_answer()
-            self.refresh_data_dicts('weight', self.weight)
-
-        return self.height, self.weight
-
-    def count_patient_data(self, behavior=''):
-        if not self.bmi:
-            self.bmi = self.get_bmi(self.weight)
-            self.refresh_data_dicts('bmi', self.bmi)
-
-        if not self.blood_volume:
-            self.blood_volume = self.count_blood_volume(behavior)
-            if self.blood_volume:
-                self.refresh_data_dicts('blood_vol', self.blood_volume, 'bleeding')
-                self.clinical_bleed = f"{'-'.join(self.count_bleed_volume((10, 15)))}"
-                self.refresh_data_dicts('clinical_bleed', self.clinical_bleed, 'bleeding')
-                self.critical_bleed = f"{'-'.join(self.count_bleed_volume((25, 30)))}"
-                self.refresh_data_dicts('critical_bleed', self.critical_bleed, 'bleeding')
-
-        return self.bmi, self.blood_volume, self.clinical_bleed, self.critical_bleed
-
-    def print_patient_data(self):
-        print()
-        for k in self.translation_dict:
-            translate_key = self.translation_dict[k]
-            if translate_key in self.patient_data_for_bleeding:
-                print(f'{k} - {self.patient_data_for_bleeding[translate_key]}')
-        print()
-
     # bmi
     def get_bmi(self, weight):
-        self.bmi = round(weight/pow(self.height/100, 2), 1)
+        self.bmi = round(weight / pow(self.height / 100, 2), 1)
         return self.bmi
 
     # counting sum of factors
@@ -113,7 +81,8 @@ class Patient:
 
             print(f'{rf.name} riskfactor is {rf_dict["count"]}', '\n')
             self.factors_count_dict.update({rf.name: rf_dict['count']})
-            self.patient_data_for_spinal.update({f'{rf.name}_{k}': rf_dict[k] for k in rf_dict if k in ['interpretation', 'count']})
+            self.patient_data_for_spinal.update(
+                {f'{rf.name}_{k}': rf_dict[k] for k in rf_dict if k in ['interpretation', 'count']})
 
         return self.risk_factors
 
@@ -150,8 +119,8 @@ class Patient:
         else:
             rounded_height = self.height
 
-        counted_dose = bupivacaine_dosage[rounded_height][sum_of_risk+2]
-        counted_dose_for_sitting = round(counted_dose+0.4, 1)
+        counted_dose = bupivacaine_dosage[rounded_height][sum_of_risk + 2]
+        counted_dose_for_sitting = round(counted_dose + 0.4, 1)
         self.patient_data_for_spinal['counted dose'] = counted_dose
         self.patient_data_for_spinal['counted dose for sitting'] = counted_dose_for_sitting
         print(f'0,5% доза тяжелого бупивакаина в положении лежа {counted_dose}ml\n')
@@ -159,33 +128,50 @@ class Patient:
 
         return counted_dose
 
-    def count_blood_volume(self, behavior=''):
-        variants = list(data.blood_vol_menu.keys())
-        if behavior == 'bleeding':
-            variants = [i for i in variants if 'нет необходимости' not in i]
-        m = Menu(topic='Что использовать для подсчета ОЦК?', variants=variants)
-        m.print_a_topic()
-        m.print_variants()
-        answer = m.get_user_answer()
-        if 'нет необходимости' in answer:
-            return 0
-        m2 = Menu(topic=f'Введите {answer} в кг', variants=0)
-        m2.print_a_topic()
-        answer2 = m2.get_user_answer()
-        weight_before_pregnancy = eval(data.blood_vol_menu[answer])
-        bmi = self.get_bmi(weight_before_pregnancy)
-        blood_vol_coef = RiskFactor('bmi', data.risk_factor_dict).get_bmi_risk_count(bmi, 'blood vol')
-        self.blood_volume = blood_vol_coef * weight_before_pregnancy
+    def count_blood_volume(self) -> object:
+        bmi_before_pregnancy = self.get_bmi(weight=self.weight_before_pregnancy)
+        bmi_rf = RiskFactor('bmi', data.risk_factor_dict)
+        bmi_rf.get_bmi_risk_count(bmi_before_pregnancy, 'blood_vol_count')
+        blood_vol_coef = bmi_rf.risk_factor_data['blood_vol_coef']
+        self.blood_volume = blood_vol_coef * self.weight_before_pregnancy
         return self.blood_volume
 
     def count_bleed_volume(self, percents=()):
-        get_bleed_vol = lambda i: (i/100) * self.blood_volume
+        def get_bleed_vol(percent):
+            return (percent / 100) * self.blood_volume
+
         vol_list = [str(get_bleed_vol(percent)) for percent in percents]
         return vol_list
 
-# pat = Patient(height=0, weight=0)
-# pat.input_patient_data()
-# pat.count_patient_data()
-# pat.print_patient_data()
+    def count_patient_data(self, behavior='') -> object:
+        if not self.bmi:
+            self.bmi = self.get_bmi(self.weight)
+            self.patient_dict['bmi'] = self.bmi
 
-#print(pat.count_blood_volume())
+        if not self.blood_volume:
+            self.blood_volume = self.count_blood_volume()
+            if self.blood_volume:
+                self.refresh_data_dicts('объем ОЦК', self.blood_volume, 'bleeding')
+                self.clinical_bleed = f"{'-'.join(self.count_bleed_volume((10, 15)))}"
+                self.refresh_data_dicts('клинически значимая кровопотреря', self.clinical_bleed, 'bleeding')
+                self.critical_bleed = f"{'-'.join(self.count_bleed_volume((25, 30)))}"
+                self.refresh_data_dicts('массивная кровопотеря', self.critical_bleed, 'bleeding')
+
+        return self
+
+    def get_report(self, behavior: str) -> str:
+        answer_list = []
+        if behavior == 'blood_vol_count':
+            for i in self.patient_data_for_bleeding:
+                answer_list.append(f'{i} ~ {self.patient_data_for_bleeding[i]}')
+        return '\n'.join(answer_list)
+
+
+if __name__ == '__main__':
+
+    pat = Patient(height=160, weight=110, weight_before=100)
+    pat.count_patient_data('blood_vol_count')
+    print(pat)
+    print(pat.bmi)
+    rep = pat.get_report('blood_vol_count')
+    print(rep)
