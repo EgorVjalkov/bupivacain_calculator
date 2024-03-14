@@ -44,9 +44,9 @@ def input_window() -> Window:
     )
 
 
-def report_window() -> Window:
+def report_window(report_format, getter) -> Window:
     return Window(
-        Format("{func_result}"),
+        Format(report_format),
         Button(Const('<< изменить параметры'),
                id='b_to_input_menu',
                on_click=selected.back_to_input_menu),
@@ -55,7 +55,11 @@ def report_window() -> Window:
                on_click=selected.back_to_main_menu),
         Cancel(Const('задача решена!')),
         state=PatientDataInput.report,
-        getter=getters.get_report)
+        getter=getter)
 
 
-dialog = Dialog(greet_window(), input_patient_data_window(), input_window(), report_window())
+dialog = Dialog(greet_window(),
+                input_patient_data_window(),
+                input_window(),
+                #report_window("{func_result}", getters.get_report),
+                report_window("{drag_report}", getters.get_drag_report))

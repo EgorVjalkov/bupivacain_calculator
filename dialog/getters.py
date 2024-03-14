@@ -4,6 +4,7 @@ from typing import Optional
 from program_logic.Patient import Patient
 from dialog.function import PatientParameter, Function
 from dialog.variants_with_id import get_dict_with_variants
+from dialog.drag import get_drag_list_answer
 
 
 async def get_funcs(dialog_manager: DialogManager,
@@ -40,6 +41,14 @@ async def get_topics_for_input(dialog_manager: DialogManager,
         category = PatientParameter(patient_data)
         data = {'category': category}
         return data
+
+
+async def get_drag_report(dialog_manager: DialogManager,
+                          **middleware_date) -> dict:
+    ctx = dialog_manager.current_context()
+    weight = ctx.dialog_data['weight']
+    drag_frame = get_drag_list_answer('dialog/drag_dosage.xlsx', weight)
+    return {'drag_report': drag_frame}
 
 
 async def get_report(dialog_manager: DialogManager,
